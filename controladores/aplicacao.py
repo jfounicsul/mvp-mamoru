@@ -3,6 +3,7 @@ Estado compartilhado da aplicação Mamoru.
 Guarda as informações vitais que precisam sobreviver à troca de telas.
 """
 
+
 class AplicacaoMamoru:
     """Só guarda estado. Não constrói UI."""
 
