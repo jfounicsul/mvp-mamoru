@@ -1,0 +1,14 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Banco de dados (não subir o SQLite local; database é criada durante a execução do software)
+dados/
+*.db
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
