@@ -2,7 +2,8 @@
 
 from controladores import (
     aplicacao,
-    estoque
+    db_construtor,
+    db_leitor,
 )
 from interface import tela_login
 
@@ -14,8 +15,8 @@ def inicializar_aplicacao(root) -> aplicacao.AplicacaoMamoru:
     app = aplicacao.AplicacaoMamoru(root)
 
     # 2. Banco (SQLite local)
-    estoque.inicializar_banco()
-    app.estoque_atual = estoque.carregar_estoque()
+    db_construtor.inicializar_banco()
+    app.estoque_atual = db_leitor.carregar_estoque()
 
     # 3. Interface
     app.tela_login = tela_login.construir_tela_login(root, app)
