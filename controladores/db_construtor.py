@@ -112,7 +112,7 @@ def salvar_pedidos(pedidos: list) -> None:
 # DADOS FICTÍCIOS (FALLBACK PARA TESTES RÁPIDOS)
 def importar_pedidos_ficticios() -> list[pedido.Pedido]:
     """Mantido para testes sem arquivo (fallback)."""
-    hoje = datetime(2026, 11, 8, 10, 0, 0)
+    hoje = datetime.now()  # <--- MUDOU AQUI: data real do sistema
 
     return [
         pedido.Pedido(
@@ -120,7 +120,7 @@ def importar_pedidos_ficticios() -> list[pedido.Pedido]:
             "Maria Silva",
             "Camiseta M",
             1,
-            leitor_planilha.leitor_planilha.formatar_data_hora(hoje),
+            leitor_planilha.formatar_data_hora(hoje),
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=7)),
             "arte_maria.png"
         ),
@@ -139,7 +139,7 @@ def importar_pedidos_ficticios() -> list[pedido.Pedido]:
             "Camiseta P",
             1,
             leitor_planilha.formatar_data_hora(hoje),
-            leitor_planilha.formatar_data_hora(hoje.replace(hour=18)),
+            leitor_planilha.formatar_data_hora(hoje.replace(hour=18)),  # Hoje às 18h
             "arte_ana.png"
         ),
         pedido.Pedido(
