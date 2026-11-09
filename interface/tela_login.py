@@ -29,17 +29,25 @@ class TelaLogin:
         )
         container.place(relx=0.5, rely=0.5, anchor="center")
 
-        titulo_texto = (
-            "Mamoru\n\n"
-            "Por favor, crie sua conta para o primeiro acesso." 
-            if self.primeiro_acesso else 
-            "Mamoru"
+        fabricas.criar_label(
+            container, 
+            "Mamoru", 
+            estilo.Fonte.Tamanho.TITULO,
+            bg=estilo.Cor.Fundo.PRINCIPAL,
+            bold=True
+        ).pack(pady=(0, estilo.Padding.PEQUENO))
+
+        subtitulo_texto = (
+            "Por favor, crie sua conta para realizar o primeiro acesso."
+            if self.primeiro_acesso else
+            "Por favor, insira seu usuário e senha para acessar o sistema."
         )
 
         fabricas.criar_label(
-            container, 
-            titulo_texto, 
-            estilo.Fonte.Tamanho.TITULO, 
+            container,
+            subtitulo_texto,
+            estilo.Fonte.Tamanho.NORMAL,
+            cor=estilo.Cor.Texto.MUTED,
             bg=estilo.Cor.Fundo.PRINCIPAL,
         ).pack(pady=estilo.Padding.PADRAO)
 
@@ -124,12 +132,12 @@ class TelaLogin:
         else:
             seguranca.registrar_tentativa(username, sucesso=False)
             
-            bloqueado_agora, _ = seguranca.esta_bloqueado(username)
+            bloqueado_agora, segundos = seguranca.esta_bloqueado(username)
             if bloqueado_agora:
                 messagebox.showerror(
                     "Mamoru — Acesso Bloqueado", 
                     f"Senha e/ou usuário incorreto inserido três (3) vezes seguidas.\n"
-                    "Por favor, tente novamente em {segundos} segundos."
+                    f"Por favor, tente novamente em {segundos} segundos."
                 )
             else:
                 messagebox.showerror(
@@ -143,4 +151,4 @@ class TelaLogin:
         self.frame.destroy()
         nova_tela = TelaLogin(self.root, self.aplicacao)
         nova_tela.construir().pack(fill="both", expand=True)
-        self.aplicacao.tela_login = nova_tela.frames
+        self.aplicacao.tela_login = nova_tela.frame
