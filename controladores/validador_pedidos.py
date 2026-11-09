@@ -16,21 +16,21 @@ def validar_pedido(pedido_obj: pedido.Pedido, estoque: dict) -> resultado_valida
 
     # Regra 1: prazo informado
     if not pedido_obj.prazo:
-        motivos.append("Prazo não informado.")
+        motivos.append("Prazo não informado.\n")
 
     # Regra 2: arte anexada
     if not pedido_obj.caminho_arte:
-        motivos.append("Arte não anexada.")
+        motivos.append("Arte não anexada.\n")
 
     # Regra 3: quantidade válida (> 0)
     if pedido_obj.quantidade <= 0:
-        motivos.append(f"Quantidade inválida ({pedido_obj.quantidade}).")
+        motivos.append(f"Quantidade inválida ({pedido_obj.quantidade}).\n")
 
     # Regra 4: estoque suficiente (case-insensitive)
     disponivel = buscar_no_estoque(estoque, pedido_obj.produto)
     if pedido_obj.quantidade > disponivel:
         motivos.append(
-            f"Estoque insuficiente para {pedido_obj.produto} "
+            f"Estoque insuficiente\n"
             f"(disponível: {disponivel}, solicitado: {pedido_obj.quantidade})."
         )
 
