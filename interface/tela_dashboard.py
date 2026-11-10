@@ -80,7 +80,7 @@ class TelaDashboard:
             ipady=estilo.Padding.Dashboard.BOTAO_Y
         )
 
-        # Botão de Reverter (Empacotado depois -> fica à esquerda do Concluir)
+        # Botão de Reverter
         btn_reverter = fabricas.criar_botao(
             cabecalho_lista, 
             "↩ Reverter", 
@@ -93,10 +93,23 @@ class TelaDashboard:
             ipady=estilo.Padding.Dashboard.BOTAO_Y
         )
 
-        # Botão de Importar Estoque (Empacotado por último -> fica à esquerda do Reverter)
+        # Botão de Importar Pedidos
+        btn_pedidos = fabricas.criar_botao(
+            cabecalho_lista, 
+            "🔄 Importar arquivo de pedidos", 
+            self.reimportar_pedidos, 
+            largura=estilo.Dimensao.Botao.Dashboard.Estoque.LARGURA
+        )
+        btn_pedidos.pack(
+            side="right", 
+            padx=estilo.Padding.Dashboard.BOTAO_X, 
+            ipady=estilo.Padding.Dashboard.BOTAO_Y
+        )
+
+        # Botão de Importar Estoque
         btn_estoque = fabricas.criar_botao(
             cabecalho_lista, 
-            "📦 Importar arquivo de estoque", 
+            "🔄 Importar arquivo de estoque", 
             self.importar_estoque, 
             largura=estilo.Dimensao.Botao.Dashboard.Estoque.LARGURA
         )
@@ -294,7 +307,7 @@ class TelaDashboard:
 
             linha = fabricas.criar_frame(lista_interna, bg=cor_fundo_linha)
             linha.config(cursor="hand2", height=35) 
-            linha.pack(fill="x", pady=estilo.Padding.PEQUENO)
+            linha.pack(fill="x", pady=0)
             linha.pack_propagate(False)
             
             linha._selecionada = False # Controle para o hover
@@ -791,3 +804,12 @@ class TelaDashboard:
                 "Mamoru — Erro na Importação", 
                 f"Ocorreu um erro ao ler a planilha:\n{erro}"
             )
+
+
+    def reimportar_pedidos(self):
+        """Chama a função de importação original da tela de importação."""
+        from interface import tela_importacao
+        
+        # Instancia a tela de importação em background e dispara a função
+        tela_imp = tela_importacao.TelaImportacao(self.root, self.aplicacao)
+        tela_imp.importar()
