@@ -52,7 +52,7 @@ class TelaImportacao:
 
     def importar(self):
         caminho_arquivo = filedialog.askopenfilename(
-            title="Mamoru — Selecione a planilha exportada pelo AJXCommerce",
+            title="Mamoru — Selecione a planilha de pedidos exportada pelo AJXCommerce",
             filetypes=[("Planilhas", "*.xlsx *.ods"), ("Todos os arquivos", "*.*")]
         )
 
