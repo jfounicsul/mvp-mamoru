@@ -4,7 +4,7 @@ Leitura nativa de planilhas Excel (.xlsx) e OpenDocument (.ods) e dados de teste
 
 import zipfile
 import xml.etree.ElementTree as ET
-from datetime import datetime, timedelta
+from datetime import datetime
 from controladores import entidades
 
 
@@ -12,7 +12,7 @@ from controladores import entidades
 # Valores configuráveis para facilitar ajustes no mapeamento das colunas.
 class Coluna:
     class Pedidos:
-        entidades.Pedido     = 0  # Coluna A
+        PEDIDO     = 0  # Coluna A
         CLIENTE    = 1  # Coluna B
         PRODUTO    = 2  # Coluna C
         QUANTIDADE = 3  # Coluna D
@@ -29,9 +29,9 @@ def converter_prazo(prazo_raw: str):
     """Converte o prazo em formatos comuns de planilha para YYYY-MM-DD HH:MM:SS."""
     if not prazo_raw:
         return None
-    for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d/%m/%Y %H:%M:%S", "%Y-%m-%d %H:%M:%S"):
+    for format in ("%d/%m/%Y", "%Y-%m-%d", "%d/%m/%Y %H:%M:%S", "%Y-%m-%d %H:%M:%S"):
         try:
-            return datetime.strptime(prazo_raw.strip(), fmt).strftime("%Y-%m-%d %H:%M:%S")
+            return datetime.strptime(prazo_raw.strip(), format).strftime("%Y-%m-%d %H:%M:%S")
         except ValueError:
             continue
     return None
@@ -54,20 +54,16 @@ def formatar_data_hora(date_time: datetime) -> str:
 # DISPATCHER: PEDIDOS
 def ler_planilha_pedidos(caminho_arquivo: str) -> list[entidades.Pedido]:
     """
-    Função única que decide qual parser de pedidos usar com base na extensão.
+    Chama o parser de pedidos (.xlsx).
     """
-    if caminho_arquivo.lower().endswith('.ods'):
-        return ler_planilha_ods(caminho_arquivo)
     return ler_planilha_xlsx(caminho_arquivo)
 
 
 # DISPATCHER: ESTOQUE
 def ler_planilha_estoque(caminho_arquivo: str) -> dict:
     """
-    Função única que decide qual parser de estoque usar com base na extensão.
+    Chama o parser de estoque (.xlsx).
     """
-    if caminho_arquivo.lower().endswith('.ods'):
-        return ler_estoque_ods(caminho_arquivo)
     return ler_estoque_xlsx(caminho_arquivo)
 
 
@@ -80,8 +76,12 @@ def ler_planilha_xlsx(caminho_arquivo: str) -> list[entidades.Pedido]:
     namespace = {'ns': 'http://schemas.openxmlformats.org/spreadsheetml/2006/main'}
 
     max_col_index = max(filter(None, [
-        Coluna.Pedidos.entidades.Pedido, Coluna.Pedidos.CLIENTE, Coluna.Pedidos.PRODUTO,
-        Coluna.Pedidos.QUANTIDADE, Coluna.Pedidos.PRAZO, Coluna.Pedidos.ARTE
+        Coluna.Pedidos.PEDIDO, 
+        Coluna.Pedidos.CLIENTE, 
+        Coluna.Pedidos.PRODUTO,
+        Coluna.Pedidos.QUANTIDADE, 
+        Coluna.Pedidos.PRAZO, 
+        Coluna.Pedidos.ARTE
     ]))
 
     try:
@@ -130,7 +130,7 @@ def ler_planilha_xlsx(caminho_arquivo: str) -> list[entidades.Pedido]:
 
                 # Monta o objeto entidades.Pedido
                 try:
-                    numero = obter_valor(valores, Coluna.Pedidos.entidades.Pedido)
+                    numero = obter_valor(valores, Coluna.Pedidos.PEDIDO)
                     if numero:
                         pedidos.append(entidades.Pedido(
                             numero=numero,
@@ -145,70 +145,7 @@ def ler_planilha_xlsx(caminho_arquivo: str) -> list[entidades.Pedido]:
                     continue
 
     except zipfile.BadZipFile:
-        print("Erro: O arquivo selecionado não é um .xlsx válido.")
-    except FileNotFoundError:
-        print("Erro: Arquivo não encontrado.")
-
-    return pedidos
-
-
-# PARSER 2: .ODS (OpenDocument Spreadsheet)
-def ler_planilha_ods(caminho_arquivo: str) -> list[entidades.Pedido]:
-    """
-    Lê um arquivo .ods usando apenas zipfile e ElementTree (nativos).
-    """
-    pedidos = []
-    namespaces = {
-        'table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
-        'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
-        'office': 'urn:oasis:names:tc:opendocument:xmlns:office:1.0'
-    }
-
-    try:
-        with zipfile.ZipFile(caminho_arquivo, 'r') as arquivo_zip:
-            # O .ods tem os dados no content.xml
-            xml_content = arquivo_zip.read('content.xml')
-            raiz = ET.fromstring(xml_content)
-
-            # Acha a primeira tabela
-            tabela = raiz.find('.//table:table', namespaces)
-            if tabela is None:
-                return pedidos
-
-            linhas = tabela.findall('table:table-row', namespaces)
-
-            # Pula o cabeçalho
-            for linha in linhas[1:]:
-                valores = [""] * 6
-                colunas = linha.findall('table:table-cell', namespaces)
-                
-                col_index = 0
-                for celula in colunas:
-                    repeticao = int(celula.get(f"{{{namespaces['table']}}}number-columns-repeated", 1))
-                    texto = "".join(celula.itertext()).strip()
-                    
-                    for _ in range(repeticao):
-                        if col_index < len(valores):
-                            valores[col_index] = texto
-                        col_index += 1
-
-                try:
-                    numero = valores[Coluna.Pedidos.entidades.Pedido].strip()
-                    if numero:
-                        pedidos.append(entidades.Pedido(
-                            numero=numero,
-                            cliente=valores[Coluna.Pedidos.CLIENTE].strip(),
-                            produto=valores[Coluna.Pedidos.PRODUTO].strip(),
-                            quantidade=int(float(valores[Coluna.Pedidos.QUANTIDADE].strip() or "0")),
-                            prazo=converter_prazo(valores[Coluna.Pedidos.PRAZO]),
-                            caminho_arte=valores[Coluna.Pedidos.ARTE].strip() or None
-                        ))
-                except Exception as erro:
-                    print(f"Erro ao processar linha ODS: {erro}")
-                    continue
-
-    except zipfile.BadZipFile:
-        print("Erro: O arquivo selecionado não é um .ods válido.")
+        print("Erro: O arquivo selecionado não é um arquivo .xlsx válido.")
     except FileNotFoundError:
         print("Erro: Arquivo não encontrado.")
 
@@ -281,62 +218,7 @@ def ler_estoque_xlsx(caminho_arquivo: str) -> dict:
                     continue
 
     except zipfile.BadZipFile:
-        print("Erro: O arquivo de estoque não é um .xlsx válido.")
-    except FileNotFoundError:
-        print("Erro: Arquivo de estoque não encontrado.")
-
-    return estoque
-
-
-# PARSER DE ESTOQUE: .ODS (OpenDocument Spreadsheet)
-def ler_estoque_ods(caminho_arquivo: str) -> dict:
-    """
-    Lê uma planilha .ods de estoque usando apenas zipfile e ElementTree.
-    Retorna {produto: quantidade_disponivel}.
-    """
-    estoque = {}
-    namespaces = {
-        'table': 'urn:oasis:names:tc:opendocument:xmlns:table:1.0',
-        'text': 'urn:oasis:names:tc:opendocument:xmlns:text:1.0',
-        'office': 'urn:oasis:names:tc:opendocument:xmlns:office:1.0'
-    }
-
-    try:
-        with zipfile.ZipFile(caminho_arquivo, 'r') as arquivo_zip:
-            xml_content = arquivo_zip.read('content.xml')
-            raiz = ET.fromstring(xml_content)
-
-            tabela = raiz.find('.//table:table', namespaces)
-            if tabela is None:
-                return estoque
-
-            linhas = tabela.findall('table:table-row', namespaces)
-
-            for linha in linhas[1:]:
-                valores = [""] * 2
-                colunas = linha.findall('table:table-cell', namespaces)
-
-                col_index = 0
-                for celula in colunas:
-                    repeticao = int(celula.get(f"{{{namespaces['table']}}}number-columns-repeated", 1))
-                    texto = "".join(celula.itertext()).strip()
-
-                    for _ in range(repeticao):
-                        if col_index < len(valores):
-                            valores[col_index] = texto
-                        col_index += 1
-
-                try:
-                    produto = valores[Coluna.Estoque.PRODUTO].strip()
-                    if produto:
-                        quantidade = int(float(valores[Coluna.Estoque.QUANTIDADE].strip() or "0"))
-                        estoque[produto] = quantidade
-                except Exception as erro:
-                    print(f"Erro ao processar linha ODS (estoque): {erro}")
-                    continue
-
-    except zipfile.BadZipFile:
-        print("Erro: O arquivo de estoque não é um .ods válido.")
+        print("Erro: O arquivo de estoque não é um arquivo .xlsx válido.")
     except FileNotFoundError:
         print("Erro: Arquivo de estoque não encontrado.")
 
