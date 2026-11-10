@@ -17,6 +17,12 @@ def main() -> int:
     root.geometry(f"{largura}x{altura}+{pos_x}+{pos_y}")
     root.withdraw()
 
+    # Ícone da janela
+    caminho_icone = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "icon.ico"
+    )
+    root.iconbitmap(caminho_icone)
+
     # 1. Bootstrap inicializa estado, banco e a classe da aplicação
     aplicacao = bootstrap.inicializar_aplicacao(root)
 
