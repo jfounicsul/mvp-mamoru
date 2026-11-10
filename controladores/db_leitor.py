@@ -4,8 +4,7 @@ Leitura da base de dados local em SQLite (nativo, sem ORM).
 
 import sqlite3
 
-from controladores import db_construtor
-from modelos import pedido
+from controladores import db_construtor, entidades
 
 
 def consultar_banco(sql: str, parametros: tuple = None) -> list:
@@ -28,13 +27,13 @@ def carregar_estoque() -> dict:
 
 
 def carregar_pedidos() -> list:
-    """Retorna lista de pedido.Pedido a partir da tabela pedidos."""
+    """Retorna lista de entidades.Pedido a partir da tabela pedidos."""
     linhas = consultar_banco(
         "SELECT numero, cliente, produto, quantidade, data_pedido, prazo, caminho_arte "
         "FROM pedidos"
     )
     return [
-        pedido.Pedido(
+        entidades.Pedido(
             numero=linha[0],
             cliente=linha[1],
             produto=linha[2],
