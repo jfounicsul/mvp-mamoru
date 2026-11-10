@@ -25,7 +25,7 @@ def abrir_janela_informacoes(root, pedido):
     root.update_idletasks()
     largura_janela = 500
     altura_janela = 400
-    x = root.winfo_x() + (root.winfo_widatetimeh() // 2) - (largura_janela // 2)
+    x = root.winfo_x() + (root.winfo_width() // 2) - (largura_janela // 2)
     y = root.winfo_y() + (root.winfo_height() // 2) - (altura_janela // 2)
     janela.geometry(f"{largura_janela}x{altura_janela}+{x}+{y}")
 
@@ -124,8 +124,9 @@ def abrir_janela_informacoes(root, pedido):
     
     if pedido.data_pedido:
         try:
-            datetime = datetime.strptime(pedido.data_pedido, "%Y-%m-%d %H:%M:%S")
-            data_formatada = datetime.strftime("%d/%m/%Y às %H:%M")
+            # Usa a classe datetime importada no topo, sem sobrescrevê-la
+            dt_obj = datetime.strptime(pedido.data_pedido, "%Y-%m-%d %H:%M:%S")
+            data_formatada = dt_obj.strftime("%d/%m/%Y às %H:%M")
         except ValueError:
             data_formatada = pedido.data_pedido
     else:
