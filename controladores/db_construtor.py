@@ -9,8 +9,7 @@ import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from modelos import pedido
-from controladores import leitor_planilha
+from controladores import leitor_planilha, entidades
 
 
 CAMINHO_DB = Path(__file__).parent.parent / "dados" / "mamoru.db"
@@ -81,7 +80,7 @@ def salvar_estoque(estoque: dict) -> None:
 
 def salvar_pedidos(pedidos: list) -> None:
     """
-    Grava uma lista de pedido.Pedido na tabela pedidos.
+    Grava uma lista de entidades.Pedido na tabela pedidos.
     Usa INSERT OR REPLACE por 'numero': reimportar a planilha atualiza os pedidos.
     """
     if not pedidos:
@@ -94,13 +93,13 @@ def salvar_pedidos(pedidos: list) -> None:
     """
     parametros = [
         (
-            pedido.numero,
-            pedido.cliente,
-            pedido.produto,
-            pedido.quantidade,
-            pedido.data_pedido,
-            pedido.prazo,
-            pedido.caminho_arte,
+            entidades.numero,
+            entidades.cliente,
+            entidades.produto,
+            entidades.quantidade,
+            entidades.data_pedido,
+            entidades.prazo,
+            entidades.caminho_arte,
             "PENDENTE",
         )
         for pedido in pedidos
@@ -110,12 +109,12 @@ def salvar_pedidos(pedidos: list) -> None:
 
 
 # DADOS FICTÍCIOS (FALLBACK PARA TESTES RÁPIDOS)
-def importar_pedidos_ficticios() -> list[pedido.Pedido]:
+def importar_pedidos_ficticios() -> list[entidades.Pedido]:
     """Mantido para testes sem arquivo (fallback)."""
     hoje = datetime.now()  # <--- MUDOU AQUI: data real do sistema
 
     return [
-        pedido.Pedido(
+        entidades.Pedido(
             "001",
             "Maria Silva",
             "Camiseta M",
@@ -124,7 +123,7 @@ def importar_pedidos_ficticios() -> list[pedido.Pedido]:
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=7)),
             "arte_maria.png"
         ),
-        pedido.Pedido(
+        entidades.Pedido(
             "002",
             "João Souza",
             "Caneca",
@@ -133,7 +132,7 @@ def importar_pedidos_ficticios() -> list[pedido.Pedido]:
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=5)),
             None
         ),
-        pedido.Pedido(
+        entidades.Pedido(
             "003",
             "Ana Aparecida",
             "Camiseta P",
@@ -142,7 +141,7 @@ def importar_pedidos_ficticios() -> list[pedido.Pedido]:
             leitor_planilha.formatar_data_hora(hoje.replace(hour=18)),  # Hoje às 18h
             "arte_ana.png"
         ),
-        pedido.Pedido(
+        entidades.Pedido(
             "004",
             "Claudio Conceição",
             "Camiseta M",
@@ -151,7 +150,7 @@ def importar_pedidos_ficticios() -> list[pedido.Pedido]:
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=2)),
             "arte_claudio.png"
         ),
-        pedido.Pedido(
+        entidades.Pedido(
             "005",
             "Pedro Perez",
             "Copo",
