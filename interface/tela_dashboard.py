@@ -726,7 +726,7 @@ class TelaDashboard:
         # tenha sido resolvido externamente (ex: arte enviada depois).
         if status_atual != "CONCLUÍDO":
             self.aplicacao.resultados_validacao[num_pedido].status = "CONCLUÍDO"
-            self.aplicacao.resultados_validacao[num_pedido].motivo = "Finalizado pelo gestor (ajuste pós-validação)"
+            self.aplicacao.resultados_validacao[num_pedido].motivo = "Finalizado"
             self.atualizar_tela()
 
     def reverter_producao(self):
