@@ -93,13 +93,13 @@ def salvar_pedidos(pedidos: list) -> None:
     """
     parametros = [
         (
-            entidades.numero,
-            entidades.cliente,
-            entidades.produto,
-            entidades.quantidade,
-            entidades.data_pedido,
-            entidades.prazo,
-            entidades.caminho_arte,
+            pedido.numero,
+            pedido.cliente,
+            pedido.produto,
+            pedido.quantidade,
+            pedido.data_pedido,
+            pedido.prazo,
+            pedido.caminho_arte,
             "PENDENTE",
         )
         for pedido in pedidos
