@@ -30,7 +30,7 @@ set tela=dashboard && python main.py
 O projeto adota uma arquitetura monolítica em camadas com separação estrita de responsabilidades (SoC). O fluxo de dependência é unidirecional.
 
 ```text
-mamoru/
+mvp-mamoru/
 ├── main.py                     # Ponto de entrada (wiring e atalho de dev)
 ├── constantes/
 │   └── estilo.py               # Tokens visuais, fontes, cores, paddings e dimensões
