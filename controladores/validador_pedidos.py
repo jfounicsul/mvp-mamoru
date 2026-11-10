@@ -3,11 +3,10 @@ Camada de regras de negócio do Mamoru: valida pedidos segundo o RF01 (prazo, ar
 Devolve VÁLIDO ou BLOQUEADO com motivos acumulados; puro por design, testável sem UI, banco ou disco.
 """
 
-from modelos import pedido
-from modelos import resultado_validacao
+from controladores import entidades
 
 
-def validar_pedido(pedido_obj: pedido.Pedido, estoque: dict) -> resultado_validacao.ResultadoValidacao:
+def validar_pedido(pedido_obj: entidades.Pedido, estoque: dict) -> entidades.ResultadoValidacao:
     """
     Aplica as regras do RF01 e devolve status + motivo.
     Acumula todos os motivos de bloqueio (não para no primeiro erro).
@@ -35,9 +34,9 @@ def validar_pedido(pedido_obj: pedido.Pedido, estoque: dict) -> resultado_valida
         )
 
     if motivos:
-        return resultado_validacao.ResultadoValidacao("RETIDO", " ".join(motivos))
+        return entidades.ResultadoValidacao("RETIDO", " ".join(motivos))
 
-    return resultado_validacao.ResultadoValidacao("VÁLIDO")
+    return entidades.ResultadoValidacao("VÁLIDO")
 
 
 def buscar_no_estoque(estoque: dict, produto: str) -> int:
