@@ -32,6 +32,9 @@ def abrir_janela_informacoes(root, pedido):
     # Trava a janela principal enquanto esta estiver aberta
     janela.transient(root)
     janela.grab_set()
+    
+    # Atalho de acessibilidade: fecha a janela ao pressionar ESC
+    janela.bind("<Escape>", lambda e: fechar_com_fade())
 
     # Container principal
     container = fabricas.criar_frame(
