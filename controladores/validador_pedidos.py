@@ -35,7 +35,7 @@ def validar_pedido(pedido_obj: pedido.Pedido, estoque: dict) -> resultado_valida
         )
 
     if motivos:
-        return resultado_validacao.ResultadoValidacao("BLOQUEADO", " ".join(motivos))
+        return resultado_validacao.ResultadoValidacao("RETIDO", " ".join(motivos))
 
     return resultado_validacao.ResultadoValidacao("VÁLIDO")
 
