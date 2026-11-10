@@ -720,9 +720,13 @@ class TelaDashboard:
         
         num_pedido = self.linha_selecionada["id"]
         status_atual = self.aplicacao.resultados_validacao[num_pedido].status
-        if status_atual != "RETIDO" and status_atual != "CONCLUÍDO":
+        
+        # Ajuste implementado após feedback da validação prática:
+        # O gestor agora pode concluir pedidos "RETIDOS" caso o problema
+        # tenha sido resolvido externamente (ex: arte enviada depois).
+        if status_atual != "CONCLUÍDO":
             self.aplicacao.resultados_validacao[num_pedido].status = "CONCLUÍDO"
-            self.aplicacao.resultados_validacao[num_pedido].motivo = "Finalizado"
+            self.aplicacao.resultados_validacao[num_pedido].motivo = "Finalizado pelo gestor (ajuste pós-validação)"
             self.atualizar_tela()
 
     def reverter_producao(self):
