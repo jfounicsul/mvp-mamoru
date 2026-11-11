@@ -2,6 +2,85 @@
 let pedidoSelecionado = null;
 let dadosGlobais = [];
 
+/* ——— MOTOR DE PULSO (FUNÇÃO GLOBAL) ——— */
+function iniciarPulso() {
+    const corBase = "#F4F6F8";
+    const forcaMaxima = 0.3;
+
+    const hexParaRgb = (hex) => {
+        hex = hex.replace('#', '');
+        return [
+            parseInt(hex.substring(0, 2), 16),
+            parseInt(hex.substring(2, 4), 16),
+            parseInt(hex.substring(4, 6), 16)
+        ];
+    };
+
+    const rgbParaHex = (rgb) => {
+        return '#' + rgb.map(valor => valor.toString(16).padStart(2, '0')).join('');
+    };
+
+    const rgbBase = hexParaRgb(corBase);
+    let estadoAnimacao = { passo: 0, subindo: true, pausa: 0 };
+    const delayPulsoMs = 30;
+    const passosPulso = 120;
+    const pausaPulso = 15;
+
+    const loopAnimacao = () => {
+        const temAvisoHoje = document.getElementById('aviso-hoje');
+        const temAvisoProximo = document.querySelector('.aviso-pulso.atencao');
+
+        if (!temAvisoHoje && !temAvisoProximo) return;
+
+        if (estadoAnimacao.pausa > 0) {
+            estadoAnimacao.pausa--;
+            setTimeout(loopAnimacao, delayPulsoMs);
+            return;
+        }
+
+        let proporcao = estadoAnimacao.passo / passosPulso;
+        proporcao = 0.5 - 0.5 * Math.cos(Math.PI * proporcao);
+        const intensidade = proporcao * forcaMaxima;
+
+        if (temAvisoHoje) {
+            const rgbPulso = hexParaRgb("#FFB2B2");
+            const corAtualRgb = [
+                Math.floor(rgbBase[0] + (rgbPulso[0] - rgbBase[0]) * intensidade),
+                Math.floor(rgbBase[1] + (rgbPulso[1] - rgbBase[1]) * intensidade),
+                Math.floor(rgbBase[2] + (rgbPulso[2] - rgbBase[2]) * intensidade)
+            ];
+            temAvisoHoje.style.backgroundColor = rgbParaHex(corAtualRgb);
+        }
+
+        if (temAvisoProximo) {
+            const rgbPulso = hexParaRgb("#FFD3A5");
+            const corAtualRgb = [
+                Math.floor(rgbBase[0] + (rgbPulso[0] - rgbBase[0]) * intensidade),
+                Math.floor(rgbBase[1] + (rgbPulso[1] - rgbBase[1]) * intensidade),
+                Math.floor(rgbBase[2] + (rgbPulso[2] - rgbBase[2]) * intensidade)
+            ];
+            temAvisoProximo.style.backgroundColor = rgbParaHex(corAtualRgb);
+        }
+
+        if (estadoAnimacao.subindo) {
+            estadoAnimacao.passo++;
+            if (estadoAnimacao.passo >= passosPulso) {
+                estadoAnimacao.passo = passosPulso;
+                estadoAnimacao.subindo = false;
+                estadoAnimacao.pausa = pausaPulso;
+            }
+        } else {
+            estadoAnimacao.passo--;
+            if (estadoAnimacao.passo <= 0) {
+                estadoAnimacao.passo = 0;
+                estadoAnimacao.subindo = true;
+                estadoAnimacao.pausa = pausaPulso;
+            }
+        }
+
+        setTimeout(loopAnimacao, delayPulsoMs);
+    };
+
 /* ——— ROTEADOR DA SPA ——— */
 function navegarPara(tela) {
     const app = document.getElementById('app');
@@ -253,85 +332,7 @@ async function carregarDashboard(app) {
             </div>
         `;
 
-        /* ——— MOTOR DE PULSO ——— */
-        const corBase = "#F4F6F8";
-        const forcaMaxima = 0.3;
 
-        const hexParaRgb = (hex) => {
-            hex = hex.replace('#', '');
-            return [
-                parseInt(hex.substring(0, 2), 16),
-                parseInt(hex.substring(2, 4), 16),
-                parseInt(hex.substring(4, 6), 16)
-            ];
-        };
-
-        const rgbParaHex = (rgb) => {
-            return '#' + rgb.map(valor => valor.toString(16).padStart(2, '0')).join('');
-        };
-
-        const rgbBase = hexParaRgb(corBase);
-        let estadoAnimacao = { passo: 0, subindo: true, pausa: 0 };
-        const delayPulsoMs = 30;
-        const passosPulso = 120;
-        const pausaPulso = 15;
-
-        const loopAnimacao = () => {
-            const temAvisoHoje = document.getElementById('aviso-hoje');
-            const temAvisoProximo = document.querySelector('.aviso-pulso.atencao');
-
-            if (!temAvisoHoje && !temAvisoProximo) return;
-
-            if (estadoAnimacao.pausa > 0) {
-                estadoAnimacao.pausa--;
-                setTimeout(loopAnimacao, delayPulsoMs);
-                return;
-            }
-
-            let proporcao = estadoAnimacao.passo / passosPulso;
-            proporcao = 0.5 - 0.5 * Math.cos(Math.PI * proporcao);
-            const intensidade = proporcao * forcaMaxima;
-
-            if (temAvisoHoje) {
-                const rgbPulso = hexParaRgb("#FFB2B2");
-                const corAtualRgb = [
-                    Math.floor(rgbBase[0] + (rgbPulso[0] - rgbBase[0]) * intensidade),
-                    Math.floor(rgbBase[1] + (rgbPulso[1] - rgbBase[1]) * intensidade),
-                    Math.floor(rgbBase[2] + (rgbPulso[2] - rgbBase[2]) * intensidade)
-                ];
-                temAvisoHoje.style.backgroundColor = rgbParaHex(corAtualRgb);
-            }
-
-            if (temAvisoProximo) {
-                const rgbPulso = hexParaRgb("#FFD3A5");
-                const corAtualRgb = [
-                    Math.floor(rgbBase[0] + (rgbPulso[0] - rgbBase[0]) * intensidade),
-                    Math.floor(rgbBase[1] + (rgbPulso[1] - rgbBase[1]) * intensidade),
-                    Math.floor(rgbBase[2] + (rgbPulso[2] - rgbBase[2]) * intensidade)
-                ];
-                temAvisoProximo.style.backgroundColor = rgbParaHex(corAtualRgb);
-            }
-
-            if (estadoAnimacao.subindo) {
-                estadoAnimacao.passo++;
-                if (estadoAnimacao.passo >= passosPulso) {
-                    estadoAnimacao.passo = passosPulso;
-                    estadoAnimacao.subindo = false;
-                    estadoAnimacao.pausa = pausaPulso;
-                }
-            } else {
-                estadoAnimacao.passo--;
-                if (estadoAnimacao.passo <= 0) {
-                    estadoAnimacao.passo = 0;
-                    estadoAnimacao.subindo = true;
-                    estadoAnimacao.pausa = pausaPulso;
-                }
-            }
-
-            setTimeout(loopAnimacao, delayPulsoMs);
-        };
-
-        loopAnimacao();
 
     } catch (erro) {
         app.innerHTML = `<div class="tela-centralizada"><p style="color:red;">Erro ao carregar dashboard.</p></div>`;
@@ -404,6 +405,7 @@ async function atualizarStatusPedido(numero, novoStatus) {
     }
 
     atualizarResumoCartoes();
+    atualizarAvisos();
 }
 
 function atualizarResumoCartoes() {
@@ -416,6 +418,52 @@ function atualizarResumoCartoes() {
     document.querySelectorAll('.cartao-valor')[1].innerText = emProducao;
     document.querySelectorAll('.cartao-valor')[2].innerText = retidos;
     document.querySelectorAll('.cartao-valor')[3].innerText = concluidos;
+}
+
+function atualizarAvisos() {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    let avisosHtml = '';
+
+    dadosGlobais.forEach(pedido => {
+        if (pedido.status !== 'CONCLUÍDO' && pedido.status !== 'RETIDO' && pedido.prazo && pedido.prazo !== '—') {
+            try {
+                const dataAlvo = new Date(pedido.prazo.replace(' ', 'T'));
+                dataAlvo.setHours(0, 0, 0, 0);
+                const diferencaDias = Math.ceil((dataAlvo - hoje) / (1000 * 60 * 60 * 24));
+
+                if (diferencaDias < 0) {
+                    avisosHtml += `<div class="aviso aviso-pulso" style="border-color:#DC2626; background-color:#EFEFEF;">
+                        <div class="aviso-titulo" style="color:#DC2626;">● ATRASADOS:</div>
+                        <div class="aviso-linha" style="color:#DC2626;">• Pedido ${pedido.numero} (${pedido.cliente}) — Atrasado há ${Math.abs(diferencaDias)} dias</div>
+                    </div>`;
+                } else if (diferencaDias === 0) {
+                    avisosHtml += `<div class="aviso aviso-pulso" id="aviso-hoje" style="border-color:#DC2626;">
+                        <div class="aviso-titulo" style="color:#DC2626;">⚠️ VENCE HOJE:</div>
+                        <div class="aviso-linha" style="color:#DC2626;">• Pedido ${pedido.numero} (${pedido.cliente}) — Entrega hoje (${pedido.prazo})</div>
+                    </div>`;
+                } else if (diferencaDias <= 2) {
+                    avisosHtml += `<div class="aviso aviso-pulso atencao">
+                        <div class="aviso-titulo">⚠️ Prazos Próximos:</div>
+                        <div class="aviso-linha">• Pedido ${pedido.numero} (${pedido.cliente}) — Vence em ${diferencaDias} dias (${pedido.prazo})</div>
+                    </div>`;
+                }
+            } catch (erro) {}
+        }
+    });
+
+    if (avisosHtml === '') {
+        avisosHtml = `<div class="aviso" style="border-color:#D1D5DB;"><div class="aviso-linha" style="color:#6B7280;">Não há pedidos com prazo urgente.</div></div>`;
+    }
+
+    const areaAvisos = document.getElementById('avisos-area');
+    if (areaAvisos) {
+        areaAvisos.innerHTML = avisosHtml;
+    }
+
+    if (document.getElementById('aviso-hoje') || document.querySelector('.aviso-pulso.atencao')) {
+        iniciarPulso();
+    }
 }
 
 /* ——— MODAL DE DETALHES ——— */

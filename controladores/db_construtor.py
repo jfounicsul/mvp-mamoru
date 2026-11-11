@@ -108,10 +108,9 @@ def salvar_pedidos(pedidos: list) -> None:
     executar_no_banco([sql], [parametros])
 
 
-# DADOS FICTÍCIOS (FALLBACK PARA TESTES RÁPIDOS)
 def importar_pedidos_ficticios() -> list[entidades.Pedido]:
     """Mantido para testes sem arquivo (fallback)."""
-    hoje = datetime.now()  # <--- MUDOU AQUI: data real do sistema
+    hoje = datetime.now()
 
     return [
         entidades.Pedido(
@@ -119,7 +118,7 @@ def importar_pedidos_ficticios() -> list[entidades.Pedido]:
             "Maria Silva",
             "Camiseta M",
             1,
-            leitor_planilha.formatar_data_hora(hoje),
+            leitor_planilha.formatar_data_hora(hoje - timedelta(days=3, hours=4, minutes=15)),
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=7)),
             "arte_maria.png"
         ),
@@ -128,7 +127,7 @@ def importar_pedidos_ficticios() -> list[entidades.Pedido]:
             "João Souza",
             "Caneca",
             2,
-            leitor_planilha.formatar_data_hora(hoje),
+            leitor_planilha.formatar_data_hora(hoje - timedelta(days=2, hours=2, minutes=30)),
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=5)),
             None
         ),
@@ -137,8 +136,8 @@ def importar_pedidos_ficticios() -> list[entidades.Pedido]:
             "Ana Aparecida",
             "Camiseta P",
             1,
-            leitor_planilha.formatar_data_hora(hoje),
-            leitor_planilha.formatar_data_hora(hoje.replace(hour=18)),  # Hoje às 18h
+            leitor_planilha.formatar_data_hora(hoje - timedelta(days=1, hours=6, minutes=45)),
+            leitor_planilha.formatar_data_hora(hoje.replace(hour=18)),
             "arte_ana.png"
         ),
         entidades.Pedido(
@@ -146,7 +145,7 @@ def importar_pedidos_ficticios() -> list[entidades.Pedido]:
             "Claudio Conceição",
             "Camiseta M",
             2,
-            leitor_planilha.formatar_data_hora(hoje),
+            leitor_planilha.formatar_data_hora(hoje - timedelta(hours=3, minutes=20)),
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=2)),
             "arte_claudio.png"
         ),
@@ -155,7 +154,7 @@ def importar_pedidos_ficticios() -> list[entidades.Pedido]:
             "Pedro Perez",
             "Copo",
             5,
-            leitor_planilha.formatar_data_hora(hoje),
+            leitor_planilha.formatar_data_hora(hoje + timedelta(hours=2, minutes=10)),
             leitor_planilha.formatar_data_hora(hoje + timedelta(days=10)),
             "arte_pedro.png"
         ),
