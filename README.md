@@ -60,6 +60,44 @@ mvp-mamoru/
 - **Separação de Camadas (SoC):** Uma camada não conhece a implementação da outra, apenas invoca suas abstrações.
 - **Persistência Isolada:** Leitura e escrita no banco de dados são feitas por módulos dedicados.
 
+## Versão Web (Deploy)
+
+A versão web do Mamoru foi construída para viabilizar o acesso remoto ao sistema sem depender do ambiente desktop. Ela mantém **toda a lógica de negócio** da versão original (importação, validação, regras de status) e substitui o Tkinter por uma interface SPA (Single Page Application) em HTML, CSS e JavaScript puro.
+
+### Stack Técnica (Web)
+- **Backend:** Python 3.12+ com `http.server` nativo (zero dependências).
+- **Frontend:** HTML5, CSS3 e JavaScript puro (sem frameworks).
+- **Persistência:** SQLite3 (nativo), compartilhando o mesmo banco `mamoru.db`.
+
+### Como Executar (Web)
+Dentro da pasta `web_deploy/`, execute:
+```bash
+python app_web.py
+```
+O servidor sobe em `http://localhost:8080`. Acesse pelo navegador.
+
+### Funcionalidades implementadas na versão web
+- **SPA com roteamento**: Login, Cadastro, Importação e Dashboard em uma única página.
+- **Importação real de planilhas `.xlsx`**: upload processado nativamente pelo Python.
+- **Dashboard dinâmico**: cartões de resumo, tabela com status, seleção de linha, modal de detalhes (duplo clique).
+- **Atualização de status**: concluir/reverter pedidos com fade suave na linha, sem recarregar a tela.
+- **Alertas proativos**: avisos de "Vence Hoje" e "Prazos Próximos" com pulso visual (replicando a animação do `animacao.py` via JavaScript).
+- **Background com logo**: imagem centralizada com opacidade controlada.
+- **Fade-in/out**: transições suaves entre telas e modal.
+
+### Estrutura da Versão Web
+```text
+web_deploy/
+├── app_web.py   # Servidor HTTP nativo e rotas da API
+├── index.html   # Documento base da SPA
+├── style.css    # Estilos e animações da interface web
+├── script.js    # Lógica da SPA (roteamento, fetch, animações)
+└── bg.png       # Imagem de fundo das telas de login/cadastro/importação
+```
+
+### Atalho de Desenvolvimento (Web)
+Na tela de importação, o botão **"Começar sem planilha"** popula o banco com os dados fictícios definidos em `db_construtor.importar_pedidos_ficticios()` e redireciona para o Dashboard.
+
 <div align="center">
   <img src="https://img.shields.io/badge/Python-3.12+-blue.svg" alt="Python">
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
