@@ -253,6 +253,7 @@ class MamoruWebHandler(http.server.SimpleHTTPRequestHandler):
                 "cliente": pedido.cliente,
                 "produto": pedido.produto,
                 "caminho_arte": pedido.caminho_arte,
+                "data_pedido": pedido.data_pedido,
                 "prazo": pedido.prazo if pedido.prazo else "—",
                 "status": resultado.status,
                 "motivo": resultado.motivo
@@ -265,7 +266,7 @@ class MamoruWebHandler(http.server.SimpleHTTPRequestHandler):
 
             elif resultado.status == "CONCLUÍDO":
                 resposta["resumo"]["concluidos"] += 1
-                
+
             else:
                 resposta["resumo"]["em_producao"] += 1
 

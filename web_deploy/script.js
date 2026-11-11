@@ -3,7 +3,15 @@ let pedidoSelecionado = null;
 let dadosGlobais = [];
 
 /* ——— MOTOR DE PULSO (FUNÇÃO GLOBAL) ——— */
+let _idPulsoAtivo = null;
+
 function iniciarPulso() {
+    // Cancela qualquer animação anterior para evitar loops concorrentes
+    if (_idPulsoAtivo) {
+        clearTimeout(_idPulsoAtivo);
+        _idPulsoAtivo = null;
+    }
+
     const corBase = "#F4F6F8";
     const forcaMaxima = 0.3;
 
@@ -34,7 +42,7 @@ function iniciarPulso() {
 
         if (estadoAnimacao.pausa > 0) {
             estadoAnimacao.pausa--;
-            setTimeout(loopAnimacao, delayPulsoMs);
+            _idPulsoAtivo = setTimeout(loopAnimacao, delayPulsoMs);
             return;
         }
 
@@ -78,8 +86,11 @@ function iniciarPulso() {
             }
         }
 
-        setTimeout(loopAnimacao, delayPulsoMs);
+        _idPulsoAtivo = setTimeout(loopAnimacao, delayPulsoMs);
     };
+
+    loopAnimacao();
+}
 
 /* ——— ROTEADOR DA SPA ——— */
 function navegarPara(tela) {
@@ -474,12 +485,12 @@ function abrirDetalhes(numero) {
     document.getElementById('modal-detalhes').querySelector('h2').innerText = 'Pedido Nº';
 
     let dataFormatada = '—';
-    if (pedido.prazo && pedido.prazo !== '—') {
+    if (pedido.data_pedido && pedido.data_pedido !== '—') {
         try {
-            const dataObjeto = new Date(pedido.prazo.replace(' ', 'T'));
+            const dataObjeto = new Date(pedido.data_pedido.replace(' ', 'T'));
             dataFormatada = dataObjeto.toLocaleDateString('pt-BR') + ' às ' + dataObjeto.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         } catch (erro) {
-            dataFormatada = pedido.prazo;
+            dataFormatada = pedido.data_pedido;
         }
     }
 
