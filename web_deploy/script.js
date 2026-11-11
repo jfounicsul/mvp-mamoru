@@ -108,8 +108,10 @@ function renderizarImportacao(app) {
                     <input type="file" id="file-estoque" accept=".xlsx">
                     <button class="btn" onclick="upload('estoque')" style="width: 100%;">Enviar Estoque</button>
                 </div>
-                <button class="btn btn-primario" onclick="navegarPara('dashboard')" style="width: 100%; margin-bottom: 12px;">Ir para o Dashboard ➔</button>
-                <button class="btn" onclick="injetarDadosFicticios()" style="width: 100%; font-size: 11px; color: #6B7280;">[DEV] Injetar Dados Fictícios</button>
+                <button class="btn btn-primario" onclick="injetarDadosFicticios()" style="width: 100%; padding: 12px; font-size: 14px;">
+                    Começar sem planilha
+                    <span style="display: block; font-size: 11px; opacity: 0.8; font-weight: normal;">(teste com dados fictícios)</span>
+                </button>
             </div>
         </div>
     `;
