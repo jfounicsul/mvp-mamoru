@@ -1,0 +1,3 @@
+# Nenhuma dependência externa necessária.
+# Este arquivo existe apenas porque o Render exige a presença de um requirements.txt
+# para identificar o projeto como Python e prosseguir com o build.

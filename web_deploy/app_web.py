@@ -41,7 +41,7 @@ def atualizar_estado_global():
 
 atualizar_estado_global()
 
-PORT = 8080
+PORT = int(os.environ.get("PORT", 8080))
 
 # ——————————————————————————————————————————————————————————————————————————
 # HANDLER HTTP DO MAMORU
